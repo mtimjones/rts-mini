@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <curses.h>
 #include <string.h>
+#include <assert.h>
 #include "rtsmini.h"
 
 WINDOW *mainwin;
@@ -15,12 +16,14 @@ void win_startup( void )
   cbreak( );
   noecho( );
   keypad( stdscr, TRUE );
-  nodelay( stdscr, TRUE );
+//  nodelay( stdscr, TRUE );
+  curs_set(0);
 
   offsetx = ( COLS - NCOLS ) / 2;
   offsety = ( LINES - NLINES ) / 2;
 
   mainwin = newwin( NLINES, NCOLS, offsety, offsetx );
+  nodelay( mainwin, TRUE );
 
   wborder( mainwin, 0, 0, 0, 0, 0, 0, 0, 0 );
 
@@ -60,6 +63,52 @@ void init_game( void )
   game_data.workers.farmers      = 2;
   game_data.workers.wood_cutters = 1;
   game_data.workers.gold_miners  = 1;
+
+  // Initialize the menu position
+  game_data.curmenu = WRKF;
+
+  return;
+}
+
+
+void emit_cursor_position( void )
+{
+  switch( game_data.curmenu )
+  {
+    case WRKF:
+      mvwaddch( mainwin,  9, 20, '[' );
+      mvwaddch( mainwin,  9, 37, ']' );
+      break;
+    case WRKW:
+      mvwaddch( mainwin, 10, 20, '[' );
+      mvwaddch( mainwin, 10, 37, ']' );
+      break;
+    case WRKM:
+      mvwaddch( mainwin, 11, 20, '[' );
+      mvwaddch( mainwin, 11, 37, ']' );
+      break;
+    case WRKA:
+      mvwaddch( mainwin, 13, 20, '[' );
+      mvwaddch( mainwin, 13, 37, ']' );
+      break;
+    case WRKG:
+      mvwaddch( mainwin, 14, 20, '[' );
+      mvwaddch( mainwin, 14, 37, ']' );
+      break;
+    case SKLF:
+      break;
+    case SKLW:
+      break;
+    case SKLM:
+      break;
+    case SKLA:
+      break;
+    case SKLG:
+      break;
+    default:
+      assert(0);
+      break;
+  }
 
   return;
 }
@@ -105,7 +154,36 @@ void update_screen( void )
     mvwprintw( mainwin, 19, 21, "Distance  %3d", game_data.enemy.distance );
   }
 
+  emit_cursor_position( );
+
   wrefresh( mainwin );
+
+  return;
+}
+
+void process_user_input( )
+{
+  int c;
+
+  c = wgetch( mainwin );
+
+  switch( c )
+  {
+    case KEY_DOWN:
+      break;
+
+    case KEY_UP:
+      break;
+
+    case KEY_LEFT:
+      break;
+
+    case KEY_RIGHT:
+      break;
+
+    case KEY_ENTER:
+      break;
+  }
 
   return;
 }
@@ -137,11 +215,10 @@ int main( int argc, char *argv[] )
 
     update_screen( );
 
-    // Process the user input.
+    process_user_input( );
 
-    // Update the enemy
+    // Update the enemy( );
 
-    // Update the resources
     update_resources( );
 
     // Delay for 100ms for a 10Hz game loop.
