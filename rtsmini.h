@@ -12,6 +12,14 @@ typedef unsigned int uint32;
 
 unsigned long long getTimestamp( void );
 
+#define INITIAL_FOOD  100
+#define INITIAL_WOOD   50
+#define INITIAL_GOLD   50
+
+#define COST_OF_FARMER 25
+#define COST_OF_CUTTER 30
+#define COST_OF_MINER  50
+
 typedef enum State { PRE_GAME, IN_GAME, POST_GAME, END_GAME } State;
 
 typedef struct Level {
@@ -50,6 +58,7 @@ typedef struct Enemy {
 } Enemy;
 
 typedef struct GameData {
+  int endOfGame;
   Level level;
   Resources resources;
   Skills skills;
