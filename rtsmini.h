@@ -12,9 +12,9 @@ typedef unsigned int uint32;
 
 unsigned long long getTimestamp( void );
 
-#define INITIAL_FOOD  100
-#define INITIAL_WOOD   50
-#define INITIAL_GOLD   50
+#define INITIAL_FOOD  (double)100
+#define INITIAL_WOOD   (double)50
+#define INITIAL_GOLD   (double)50
 
 #define COST_OF_FARMER 25
 #define COST_OF_CUTTER 30
@@ -29,9 +29,9 @@ typedef struct Level {
 } Level;
 
 typedef struct Resources {
-  uint32 food;
-  uint32 wood;
-  uint32 gold;
+  double food;
+  double wood;
+  double gold;
 } Resources;
 
 typedef struct Skills {
@@ -51,6 +51,7 @@ typedef struct Workers {
 } Workers;
 
 typedef struct Enemy {
+  uint32 active;
   uint32 level;
   uint32 hp;
   uint32 speed;
@@ -59,6 +60,7 @@ typedef struct Enemy {
 
 typedef struct GameData {
   int endOfGame;
+  int wallclock;
   Level level;
   Resources resources;
   Skills skills;
