@@ -61,12 +61,50 @@ typedef struct Enemy {
 typedef struct GameData {
   int endOfGame;
   int wallclock;
+  unsigned int curmenu;
   Level level;
   Resources resources;
   Skills skills;
   Workers workers;
   Enemy enemy;
 } GameData;
+
+
+// Key Map
+
+#define UP( x )	    ( x << 0  )
+#define DOWN( x )   ( x << 8  )
+#define LEFT( x )   ( x << 16 )
+#define RIGHT( x )  ( x << 24 )
+
+#define ILGL	0
+
+#define WRKF    1
+#define WRKG    2
+#define WRKA    3
+#define WRKM    4
+#define WRKW    5
+
+#define SKLF    6
+#define SKLW    7
+#define SKLM    8
+#define SKLA    9
+#define SKLG    10
+
+uint32 moves[11] = {
+  0,                                                    // ILGL
+  ( UP(ILGL) | DOWN(WRKW) | LEFT(ILGL) | RIGHT(SKLF) ), // WKRF
+  ( UP(WRKF) | DOWN(WRKM) | LEFT(ILGL) | RIGHT(SKLW) ), // WKRW
+  ( UP(WRKW) | DOWN(WRKA) | LEFT(ILGL) | RIGHT(SKLM) ), // WKRM
+  ( UP(WRKM) | DOWN(WRKG) | LEFT(ILGL) | RIGHT(SKLA) ), // WKRA
+  ( UP(WRKA) | DOWN(ILGL) | LEFT(ILGL) | RIGHT(SKLG) ), // WRKG
+  ( UP(ILGL) | DOWN(SKLW) | LEFT(WRKF) | RIGHT(ILGL) ), // SKLF
+  ( UP(SKLF) | DOWN(SKLM) | LEFT(WRKW) | RIGHT(ILGL) ), // SKLW
+  ( UP(SKLW) | DOWN(SKLA) | LEFT(WRKM) | RIGHT(ILGL) ), // SKLM
+  ( UP(SKLM) | DOWN(SKLG) | LEFT(WRKA) | RIGHT(ILGL) ), // SKLA
+  ( UP(SKLA) | DOWN(ILGL) | LEFT(WRKG) | RIGHT(ILGL) )  // SKLG
+};
+
 
 #endif // __RTS_MINI_H__
 
