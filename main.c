@@ -262,6 +262,13 @@ void update_resources( )
 }
 
 
+void update_enemy( )
+{
+
+  return;
+}
+
+
 int main( int argc, char *argv[] )
 {
   unsigned long long curTime = getTimestamp( );
@@ -270,14 +277,13 @@ int main( int argc, char *argv[] )
 
   init_game( );
 
-  while ( game_data.state != EXIT )
+  while ( game_data.level.state != EXIT )
   {
-
     update_screen( );
 
     process_user_input( );
 
-    Update_enemy( );
+    update_enemy( );
 
     update_resources( );
 
