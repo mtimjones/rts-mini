@@ -16,9 +16,25 @@ unsigned long long getTimestamp( void );
 #define INITIAL_WOOD   (double)50
 #define INITIAL_GOLD   (double)50
 
-#define COST_OF_FARMER 25
-#define COST_OF_CUTTER 30
-#define COST_OF_MINER  50
+typedef struct Cost {
+  int food;
+  int wood;
+  int gold;
+} Cost;
+
+Cost costs[11]= {
+  {  0,  0,  0 }, // ILGL
+  { 30, 20,  0 }, // WRKF
+  { 40, 10,  0 }, // WRKW
+  { 40, 30,  0 }, // WRKM
+  { 75, 50, 25 }, // WRKA
+  { 90,  0, 50 }, // WRKG
+  {  0,  0,  0 }, // SKLF
+  {  0,  0,  0 }, // SKLW
+  {  0,  0,  0 }, // SKLM
+  {  0,  0,  0 }, // SKLA
+  {  0,  0,  0 }  // SKLG
+};
 
 typedef enum State { PRE_GAME, IN_GAME, POST_GAME, END_GAME } State;
 
@@ -41,6 +57,8 @@ typedef struct Skills {
   uint32 archery;
   uint32 gunnery;
 } Skills;
+
+// A skill indicates the rate for the worker (gold/sec, range, etc.).
 
 typedef struct Workers {
   uint32 farmers;
@@ -123,11 +141,11 @@ Position cursors[11] = {
   { 11, 20, 37 }, // WRKM
   { 13, 20, 37 }, // WRKA
   { 14, 20, 37 }, // WRKG
-  {  0,  0,  0 }, // SKLF
-  {  0,  0,  0 }, // SKLW
-  {  0,  0,  0 }, // SKLM
-  {  0,  0,  0 }, // SKLA
-  {  0,  0,  0 }  // SKLG
+  {  9, 43, 55 }, // SKLF
+  { 10, 43, 55 }, // SKLW
+  { 11, 43, 55 }, // SKLM
+  { 13, 43, 55 }, // SKLA
+  { 14, 43, 55 }  // SKLG
 };
 
 #endif // __RTS_MINI_H__
