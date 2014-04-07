@@ -61,7 +61,7 @@ void init_game( void )
   game_data.resources.gold = INITIAL_GOLD;
 
   // Initialize the workers
-  game_data.workers.farmers      = 2;
+  game_data.workers.farmers      = 1;
   game_data.workers.wood_cutters = 1;
   game_data.workers.gold_miners  = 1;
 
@@ -134,13 +134,19 @@ void update_screen( void )
   mvwprintw( mainwin, 13, 44, "Archery %3d", game_data.skills.archery );
   mvwprintw( mainwin, 14, 44, "Gunnery %3d", game_data.skills.gunnery );
 
+  mvwprintw( mainwin, 16,  4, "Cost %3d/%3d/%3d (F/W/G) for %s",
+               costs[game_data.curmenu].food, 
+               costs[game_data.curmenu].wood, 
+               costs[game_data.curmenu].gold,
+               costs[game_data.curmenu].item );
+
   if (game_data.enemy.active)
   {
-    mvwprintw( mainwin, 16,  4, "Enemy:" );
-    mvwprintw( mainwin, 18,  6, "Level   %2d", game_data.enemy.level );
-    mvwprintw( mainwin, 19,  6, "HP     %3d", game_data.enemy.hp );
-    mvwprintw( mainwin, 18, 21, "Speed      %2d", game_data.enemy.speed );
-    mvwprintw( mainwin, 19, 21, "Distance  %3d", game_data.enemy.distance );
+    mvwprintw( mainwin, 19,  4, "Enemy:" );
+    mvwprintw( mainwin, 21,  6, "Level   %2d", game_data.enemy.level );
+    mvwprintw( mainwin, 22,  6, "HP     %3d", game_data.enemy.hp );
+    mvwprintw( mainwin, 21, 21, "Speed      %2d", game_data.enemy.speed );
+    mvwprintw( mainwin, 22, 21, "Distance  %3d", game_data.enemy.distance );
   }
 
   wrefresh( mainwin );
@@ -177,6 +183,8 @@ void purchase_item( )
         game_data.workers.gunners++;
         break;
       case SKLF:
+// Need to multiply cost by 1.1 for each level purchased.
+// for each level, the gold cost of the unit increases accordinly (1.1).
         break;
       case SKLW:
         break;
@@ -245,9 +253,9 @@ void update_resources( )
 {
   // Need to update for skills...
 
-  game_data.resources.food += ( (double)game_data.workers.farmers * 0.05 );
-  game_data.resources.wood += ( (double)game_data.workers.wood_cutters * 0.05 );
-  game_data.resources.gold += ( (double)game_data.workers.gold_miners * 0.05 );
+  game_data.resources.food += ( (double)game_data.workers.farmers * FOOD_MULT );
+  game_data.resources.wood += ( (double)game_data.workers.wood_cutters * WOOD_MULT );
+  game_data.resources.gold += ( (double)game_data.workers.gold_miners * GOLD_MULT );
 
 
   return;

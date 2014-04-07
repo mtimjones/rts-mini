@@ -12,28 +12,33 @@ typedef unsigned int uint32;
 
 unsigned long long getTimestamp( void );
 
-#define INITIAL_FOOD  (double)100
-#define INITIAL_WOOD   (double)50
-#define INITIAL_GOLD   (double)50
+#define INITIAL_FOOD  (double)80
+#define INITIAL_WOOD  (double)40
+#define INITIAL_GOLD  (double)10
+
+#define FOOD_MULT     (double)0.05
+#define WOOD_MULT     (double)0.04
+#define GOLD_MULT     (double)0.02
 
 typedef struct Cost {
   int food;
   int wood;
   int gold;
+  char *item;
 } Cost;
 
 Cost costs[11]= {
-  {  0,  0,  0 }, // ILGL
-  { 30, 20,  0 }, // WRKF
-  { 40, 10,  0 }, // WRKW
-  { 40, 30,  0 }, // WRKM
-  { 75, 50, 25 }, // WRKA
-  { 90,  0, 50 }, // WRKG
-  {  0,  0,  0 }, // SKLF
-  {  0,  0,  0 }, // SKLW
-  {  0,  0,  0 }, // SKLM
-  {  0,  0,  0 }, // SKLA
-  {  0,  0,  0 }  // SKLG
+  {  0,  0,  0, "Unknown     " }, // ILGL
+  { 30, 20,  0, "Farmer      " }, // WRKF
+  { 40, 10,  0, "Wood Cutter " }, // WRKW
+  { 40, 30,  0, "Gold Miner  " }, // WRKM
+  { 75, 50, 25, "Archer      " }, // WRKA
+  { 90,  0, 50, "Gunner      " }, // WRKG
+  {  0,  0,  0, "Farming     " }, // SKLF
+  {  0,  0,  0, "Wood Cutting" }, // SKLW
+  {  0,  0,  0, "Mining      " }, // SKLM
+  {  0,  0,  0, "Archery     " }, // SKLA
+  {  0,  0,  0, "Gunnery     " }  // SKLG
 };
 
 typedef enum State { PRE_GAME, IN_GAME, POST_GAME, END_GAME } State;
