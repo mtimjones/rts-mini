@@ -65,6 +65,13 @@ void init_game( void )
   game_data.workers.wood_cutters = 1;
   game_data.workers.gold_miners  = 1;
 
+  // Initialize the skills
+  game_data.skills.farming = 1;
+  game_data.skills.wood_cutting = 1;
+  game_data.skills.gold_mining = 1;
+  game_data.skills.archery = 1;
+  game_data.skills.gunnery = 1;
+
   // Initialize the menu position
   game_data.curmenu = WRKF;
   emit_cursor_position( );
@@ -279,8 +286,6 @@ int main( int argc, char *argv[] )
 
   while ( game_data.level.state != EXIT )
   {
-    update_screen( );
-
     process_user_input( );
 
     update_enemy( );
@@ -290,6 +295,8 @@ int main( int argc, char *argv[] )
     // Delay for 100ms for a 10Hz game loop.
     while (getTimestamp( ) < curTime + TIME_DELTA );
     curTime += TIME_DELTA;
+
+    update_screen( );
 
     game_data.wallclock++;
   }
