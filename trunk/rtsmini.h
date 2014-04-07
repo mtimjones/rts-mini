@@ -77,13 +77,18 @@ typedef struct GameData {
 #define LEFT( x )   ( x << 16 )
 #define RIGHT( x )  ( x << 24 )
 
+#define GET_UP( x )    ( ( moves[ x ] & 0xff ) )
+#define GET_DOWN( x )  ( ( moves[ x ] >> 8 ) & 0xff )
+#define GET_LEFT( x )  ( ( moves[ x ] >> 16 ) & 0xff )
+#define GET_RIGHT( x ) ( ( moves[ x ] >> 24 ) & 0xff )
+
 #define ILGL	0
 
 #define WRKF    1
-#define WRKG    2
-#define WRKA    3
-#define WRKM    4
-#define WRKW    5
+#define WRKW    2
+#define WRKM    3
+#define WRKA    4
+#define WRKG    5
 
 #define SKLF    6
 #define SKLW    7
@@ -91,7 +96,7 @@ typedef struct GameData {
 #define SKLA    9
 #define SKLG    10
 
-uint32 moves[11] = {
+const uint32 moves[11] = {
   0,                                                    // ILGL
   ( UP(ILGL) | DOWN(WRKW) | LEFT(ILGL) | RIGHT(SKLF) ), // WKRF
   ( UP(WRKF) | DOWN(WRKM) | LEFT(ILGL) | RIGHT(SKLW) ), // WKRW
@@ -105,6 +110,25 @@ uint32 moves[11] = {
   ( UP(SKLA) | DOWN(ILGL) | LEFT(WRKG) | RIGHT(ILGL) )  // SKLG
 };
 
+typedef struct Position {
+  int row;
+  int col1;
+  int col2;
+} Position;
+
+Position cursors[11] = {
+  {  0,  0,  0 }, // ILGL
+  {  9, 20, 37 }, // WRKF
+  { 10, 20, 37 }, // WRKW
+  { 11, 20, 37 }, // WRKM
+  { 13, 20, 37 }, // WRKA
+  { 14, 20, 37 }, // WRKG
+  {  0,  0,  0 }, // SKLF
+  {  0,  0,  0 }, // SKLW
+  {  0,  0,  0 }, // SKLM
+  {  0,  0,  0 }, // SKLA
+  {  0,  0,  0 }  // SKLG
+};
 
 #endif // __RTS_MINI_H__
 

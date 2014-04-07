@@ -15,8 +15,6 @@ void win_startup( void )
   initscr( );
   cbreak( );
   noecho( );
-  keypad( stdscr, TRUE );
-//  nodelay( stdscr, TRUE );
   curs_set(0);
 
   offsetx = ( COLS - NCOLS ) / 2;
@@ -24,6 +22,7 @@ void win_startup( void )
 
   mainwin = newwin( NLINES, NCOLS, offsety, offsetx );
   nodelay( mainwin, TRUE );
+  keypad( mainwin, TRUE );
 
   wborder( mainwin, 0, 0, 0, 0, 0, 0, 0, 0 );
 
@@ -45,6 +44,7 @@ void win_shutdown( void )
 
 void init_game( void )
 {
+  extern void emit_cursor_position( );
 
   // Clear the game data to zero
   memset( (void *)&game_data, 0, sizeof( game_data ) );
@@ -66,6 +66,7 @@ void init_game( void )
 
   // Initialize the menu position
   game_data.curmenu = WRKF;
+  emit_cursor_position( );
 
   return;
 }
@@ -73,42 +74,29 @@ void init_game( void )
 
 void emit_cursor_position( void )
 {
-  switch( game_data.curmenu )
-  {
-    case WRKF:
-      mvwaddch( mainwin,  9, 20, '[' );
-      mvwaddch( mainwin,  9, 37, ']' );
-      break;
-    case WRKW:
-      mvwaddch( mainwin, 10, 20, '[' );
-      mvwaddch( mainwin, 10, 37, ']' );
-      break;
-    case WRKM:
-      mvwaddch( mainwin, 11, 20, '[' );
-      mvwaddch( mainwin, 11, 37, ']' );
-      break;
-    case WRKA:
-      mvwaddch( mainwin, 13, 20, '[' );
-      mvwaddch( mainwin, 13, 37, ']' );
-      break;
-    case WRKG:
-      mvwaddch( mainwin, 14, 20, '[' );
-      mvwaddch( mainwin, 14, 37, ']' );
-      break;
-    case SKLF:
-      break;
-    case SKLW:
-      break;
-    case SKLM:
-      break;
-    case SKLA:
-      break;
-    case SKLG:
-      break;
-    default:
-      assert(0);
-      break;
-  }
+  int row, col1, col2;
+
+  row  = cursors[game_data.curmenu].row;
+  col1 = cursors[game_data.curmenu].col1;
+  col2 = cursors[game_data.curmenu].col2;
+
+  mvwaddch( mainwin, row, col1, '[' );
+  mvwaddch( mainwin, row, col2, ']' );
+
+  return;
+}
+
+
+void clear_cursor_position( void )
+{
+  int row, col1, col2;
+
+  row  = cursors[game_data.curmenu].row;
+  col1 = cursors[game_data.curmenu].col1;
+  col2 = cursors[game_data.curmenu].col2;
+
+  mvwaddch( mainwin, row, col1, ' ' );
+  mvwaddch( mainwin, row, col2, ' ' );
 
   return;
 }
@@ -154,8 +142,6 @@ void update_screen( void )
     mvwprintw( mainwin, 19, 21, "Distance  %3d", game_data.enemy.distance );
   }
 
-  emit_cursor_position( );
-
   wrefresh( mainwin );
 
   return;
@@ -164,26 +150,41 @@ void update_screen( void )
 void process_user_input( )
 {
   int c;
+  unsigned int next;
 
   c = wgetch( mainwin );
+
+  if (c == ERR) return;
+
+  clear_cursor_position( );
 
   switch( c )
   {
     case KEY_DOWN:
+      next = GET_DOWN( game_data.curmenu );
+      if (next != ILGL) game_data.curmenu = next;
       break;
 
     case KEY_UP:
+      next = GET_UP( game_data.curmenu );
+      if (next != ILGL) game_data.curmenu = next;
       break;
 
     case KEY_LEFT:
+      next = GET_LEFT( game_data.curmenu );
+      if (next != ILGL) game_data.curmenu = next;
       break;
 
     case KEY_RIGHT:
+      next = GET_RIGHT( game_data.curmenu );
+      if (next != ILGL) game_data.curmenu = next;
       break;
 
     case KEY_ENTER:
       break;
   }
+
+  emit_cursor_position( );
 
   return;
 }
