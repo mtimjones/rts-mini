@@ -16,6 +16,7 @@ void win_startup( void )
   cbreak( );
   noecho( );
   curs_set(0);
+  nonl();
 
   offsetx = ( COLS - NCOLS ) / 2;
   offsety = ( LINES - NLINES ) / 2;
@@ -147,6 +148,55 @@ void update_screen( void )
   return;
 }
 
+
+void purchase_item( )
+{
+  if ( ( game_data.resources.food >= costs[game_data.curmenu].food ) &&
+       ( game_data.resources.wood >= costs[game_data.curmenu].wood ) &&
+       ( game_data.resources.gold >= costs[game_data.curmenu].gold ) )
+  {
+    game_data.resources.food -= costs[game_data.curmenu].food;
+    game_data.resources.wood -= costs[game_data.curmenu].wood;
+    game_data.resources.gold -= costs[game_data.curmenu].gold;
+
+    switch( game_data.curmenu )
+    {
+      case WRKF:
+        game_data.workers.farmers++;
+        break;
+      case WRKW:
+        game_data.workers.wood_cutters++;
+        break;
+      case WRKM:
+        game_data.workers.gold_miners++;
+        break;
+      case WRKA:
+        game_data.workers.archers++;
+        break;
+      case WRKG:
+        game_data.workers.gunners++;
+        break;
+      case SKLF:
+        break;
+      case SKLW:
+        break;
+      case SKLM:
+        break;
+      case SKLA:
+        break;
+      case SKLG:
+        break;
+      default:
+        assert(0);
+        break;
+    }
+
+  }
+
+  return;
+}
+
+
 void process_user_input( )
 {
   int c;
@@ -180,7 +230,8 @@ void process_user_input( )
       if (next != ILGL) game_data.curmenu = next;
       break;
 
-    case KEY_ENTER:
+    case 0x0d:
+      purchase_item( );
       break;
   }
 
