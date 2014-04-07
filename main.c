@@ -52,7 +52,7 @@ void init_game( void )
 
   // Initialize the level data
   game_data.level.iteration = 1;
-  game_data.level.state = PRE_GAME;
+  game_data.level.state = INITIALIZATION;
   game_data.level.delay = 1000000; // 10 seconds
 
   // Initialize the resources
@@ -270,14 +270,14 @@ int main( int argc, char *argv[] )
 
   init_game( );
 
-  while (!game_data.endOfGame)
+  while ( game_data.state != EXIT )
   {
 
     update_screen( );
 
     process_user_input( );
 
-    // Update the enemy( );
+    Update_enemy( );
 
     update_resources( );
 

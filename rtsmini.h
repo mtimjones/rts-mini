@@ -41,7 +41,14 @@ Cost costs[11]= {
   {  0,  0,  0, "Gunnery     " }  // SKLG
 };
 
-typedef enum State { PRE_GAME, IN_GAME, POST_GAME, END_GAME } State;
+typedef enum State { 
+  INITIALIZATION,
+  PRE_GAME, 
+  IN_GAME, 
+  POST_GAME, 
+  END_GAME,
+  EXIT
+} State;
 
 typedef struct Level {
   uint32 iteration;
