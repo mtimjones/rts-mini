@@ -6,7 +6,7 @@
 
 WINDOW *mainwin;
 
-GameData game_data;
+static GameData game_data;
 
 void win_startup( void )
 {
@@ -53,7 +53,7 @@ void init_game( void )
   // Initialize the level data
   game_data.level.iteration = 1;
   game_data.level.state = INITIALIZATION;
-  game_data.level.delay = 1000000; // 10 seconds
+  game_data.level.delay = 10; // 10 seconds
 
   // Initialize the resources
   game_data.resources.food = INITIAL_FOOD;
@@ -147,13 +147,13 @@ void update_screen( void )
                costs[game_data.curmenu].gold,
                costs[game_data.curmenu].item );
 
-  if (game_data.enemy.active)
+  if ( game_data.level.state == IN_GAME )
   {
-    mvwprintw( mainwin, 19,  4, "Enemy:" );
-    mvwprintw( mainwin, 21,  6, "Level   %2d", game_data.enemy.level );
-    mvwprintw( mainwin, 22,  6, "HP     %3d", game_data.enemy.hp );
-    mvwprintw( mainwin, 21, 21, "Speed      %2d", game_data.enemy.speed );
-    mvwprintw( mainwin, 22, 21, "Distance  %3d", game_data.enemy.distance );
+    mvwprintw( mainwin, 20,  4, "Enemy:" );
+    mvwprintw( mainwin, 22,  6, "Level   %2d", game_data.level.iteration );
+    mvwprintw( mainwin, 23,  6, "HP     %3d", game_data.enemy.hp );
+    mvwprintw( mainwin, 22, 21, "Speed      %2d", game_data.enemy.speed );
+    mvwprintw( mainwin, 23, 21, "Distance  %3d", (int)game_data.enemy.distance );
   }
 
   wrefresh( mainwin );
@@ -269,8 +269,119 @@ void update_resources( )
 }
 
 
-void update_enemy( )
+void update_enemy( void )
 {
+  if ( game_data.level.state == IN_GAME )
+  {
+    // Archers attack
+
+    // Gunners attack
+
+    // Test the enemy
+    if ( game_data.enemy.hp <= 0 )
+    {
+      game_data.level.state = POST_GAME;
+      game_data.level.delay = 10;
+    }
+    else
+    {
+      // Decrease enemy distance
+      game_data.enemy.distance -= ( ( (double)game_data.enemy.speed ) / 10.0 );
+
+      // Test the distance
+      if ( game_data.enemy.distance <= 0.0 ) 
+      {
+        game_data.level.state = YOU_DIED;
+        game_data.level.delay = 5;
+      }
+    }
+  }
+  return;
+}
+
+
+EnemyLevel enemies[MAX_LEVELS] = {
+  {  20,   2 }, 
+  {  35,   4 },
+  { 100,   1 },
+  {  20,   7 },
+  { 200,   1 }
+};
+
+
+void init_enemy( void )
+{
+  // Iteration starts at 1, so we subtract one for the enemies array
+  game_data.enemy.hp = enemies[game_data.level.iteration-1].hp;
+  game_data.enemy.speed = enemies[game_data.level.iteration-1].speed;
+  game_data.enemy.distance = 100.0;
+
+  return;
+}
+
+
+void update_game_state( )
+{
+  if (game_data.level.delay > 0)
+  {
+    mvwprintw( mainwin, 18, 4, "%s (%d)", 
+                status[game_data.level.state], (game_data.level.delay-1) );
+
+    // Wait for the delay to expire
+    if ( --game_data.level.delay == 0 )
+    {
+      // Transition to the next state
+      switch( game_data.level.state )
+      {
+        case INITIALIZATION:
+          game_data.level.state = ALL_QUIET;
+          game_data.level.delay = 5;
+          break;
+
+        case ALL_QUIET:
+          game_data.level.state = PRE_GAME;
+          game_data.level.delay = 5;
+          break;
+
+        case PRE_GAME:
+          game_data.level.state = IN_GAME;
+          game_data.level.delay = 0;
+          mvwprintw( mainwin, 18, 4, "%s      ", status[game_data.level.state] );
+          init_enemy( );
+          break;
+
+        case IN_GAME:
+          break;
+
+        case POST_GAME:
+          if ( game_data.level.iteration++ == MAX_LEVELS )
+          {
+            game_data.level.state = GAME_OVER;
+            game_data.level.delay = 5;
+          }
+          else 
+          {
+            game_data.level.state = ALL_QUIET;
+            game_data.level.delay = 5;
+          }
+          break;
+
+        case YOU_DIED:
+          game_data.level.state = EXIT;
+          break;
+
+        case GAME_OVER:
+          game_data.level.state = EXIT;
+          break;
+
+        case EXIT:
+          break;
+
+      }
+
+    }
+
+  }
 
   return;
 }
@@ -288,17 +399,23 @@ int main( int argc, char *argv[] )
   {
     process_user_input( );
 
-    update_enemy( );
-
     update_resources( );
 
-    // Delay for 100ms for a 10Hz game loop.
-    while (getTimestamp( ) < curTime + TIME_DELTA );
-    curTime += TIME_DELTA;
+    update_enemy( );
 
     update_screen( );
 
+    // Delay for 100ms for a 10Hz game loop.
+    while ( getTimestamp( ) < curTime + TIME_DELTA );
+    curTime += TIME_DELTA;
+
     game_data.wallclock++;
+
+    if ( ( game_data.wallclock % 10 ) == 0 ) 
+    {
+      update_game_state( );
+    }
+
   }
 
   win_shutdown( );
