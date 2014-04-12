@@ -13,12 +13,12 @@ typedef unsigned int uint32;
 unsigned long long getTimestamp( void );
 
 #define INITIAL_FOOD  (double)80
-#define INITIAL_WOOD  (double)50
+#define INITIAL_WOOD  (double)60
 #define INITIAL_GOLD  (double)60
 
 #define FOOD_MULT     (double)0.07
 #define WOOD_MULT     (double)0.05
-#define GOLD_MULT     (double)0.03
+#define GOLD_MULT     (double)0.035
 
 typedef struct Cost {
   double food;
@@ -132,7 +132,7 @@ EnemyLevel enemies[MAX_LEVELS] = {
   {  45.0,   8 },
   {  40.0,   9 },
   {  70.0,   8 },
-  { 100.0,   7 },
+  {  80.0,   7 },
   { 999.0,   1 }
 };
 
