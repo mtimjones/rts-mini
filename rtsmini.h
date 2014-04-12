@@ -13,7 +13,7 @@ typedef unsigned int uint32;
 unsigned long long getTimestamp( void );
 
 #define INITIAL_FOOD  (double)80
-#define INITIAL_WOOD  (double)40
+#define INITIAL_WOOD  (double)50
 #define INITIAL_GOLD  (double)60
 
 #define FOOD_MULT     (double)0.07
@@ -34,11 +34,11 @@ Cost costs[11]= {
   { 30.0, 30.0,  0.0, "Gold Miner  " }, // WRKM
   { 45.0, 30.0, 15.0, "Archer      " }, // WRKA
   { 60.0,  0.0, 50.0, "Gunner      " }, // WRKG
-  { 20.0,  0.0,  0.0, "Farming     " }, // SKLF
-  { 20.0,  0.0,  0.0, "Wood Cutting" }, // SKLW
-  { 30.0,  0.0,  0.0, "Mining      " }, // SKLM
-  { 50.0,  0.0,  0.0, "Archery     " }, // SKLA
-  { 50.0,  0.0,  0.0, "Gunnery     " }  // SKLG
+  { 00.0,  0.0, 30.0, "Farming     " }, // SKLF
+  { 00.0,  0.0, 30.0, "Wood Cutting" }, // SKLW
+  { 00.0,  0.0, 50.0, "Mining      " }, // SKLM
+  { 00.0,  0.0, 60.0, "Archery     " }, // SKLA
+  { 00.0,  0.0, 60.0, "Gunnery     " }  // SKLG
 };
 
 typedef enum State { 
@@ -58,8 +58,8 @@ const char *status[8]={
   "Rumbling...  An enemy approaches...      \0", // PRE_GAME
   "Your troops are attacking the enemy...   \0", // IN_GAME
   "Enemy is defeated.                       \0", // POST_GAME
-  "Enemy has reached the barricade.         \0", // YOU_DIED
-  "Final enemy is defeated.                 \0", // GAME_OVER
+  "Enemy reached the barricade.  You lose.  \0", // YOU_DIED
+  "Final enemy is defeated.  You win.       \0", // GAME_OVER
   "                                         \0"  // EXIT
 };
 
@@ -121,16 +121,19 @@ typedef struct EnemyLevel {
   int speed;
 } EnemyLevel;
 
-#define MAX_LEVELS	7
+#define MAX_LEVELS	10
 
 EnemyLevel enemies[MAX_LEVELS] = {
-  {  20.0,   2 },
-  {  35.0,   3 },
-  { 100.0,   1 },
-  {  20.0,   7 },
-  {  25.0,   8 },
-  {  30.0,   8 },
-  { 200.0,   1 }
+  {  40.0,   2 },
+  {  50.0,   3 },
+  {  50.0,   4 },
+  { 100.0,   3 },
+  {  25.0,   9 },
+  {  45.0,   8 },
+  {  40.0,   9 },
+  {  70.0,   8 },
+  { 100.0,   7 },
+  { 999.0,   1 }
 };
 
 

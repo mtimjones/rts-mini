@@ -216,11 +216,15 @@ void purchase_item( )
       case SKLA:
         game_data.skills.archery++;
         costs[SKLA].gold *= 1.1;
+        costs[WRKA].food *= 1.1;
+        costs[WRKA].wood *= 1.1;
         costs[WRKA].gold *= 1.1;
         break;
       case SKLG:
         game_data.skills.gunnery++;
         costs[SKLG].gold *= 1.1;
+        costs[WRKG].food *= 1.1;
+        costs[WRKG].wood *= 1.1;
         costs[WRKG].gold *= 1.1;
         break;
       default:
@@ -280,11 +284,12 @@ void process_user_input( )
 
 void update_resources( )
 {
-  // Need to update for skills...
-
-  game_data.resources.food += ( (double)game_data.workers.farmers * FOOD_MULT );
-  game_data.resources.wood += ( (double)game_data.workers.wood_cutters * WOOD_MULT );
-  game_data.resources.gold += ( (double)game_data.workers.gold_miners * GOLD_MULT );
+  game_data.resources.food += ( (double)game_data.workers.farmers * 
+                                ((double)game_data.skills.farming * FOOD_MULT ) );
+  game_data.resources.wood += ( (double)game_data.workers.wood_cutters *
+                                ((double)game_data.skills.farming * WOOD_MULT ) );
+  game_data.resources.gold += ( (double)game_data.workers.gold_miners *
+                                ((double)game_data.skills.farming * GOLD_MULT ) );
 
   return;
 }
@@ -309,8 +314,16 @@ void update_enemy( void )
     // Test the enemy
     if ( game_data.enemy.hp <= 0 )
     {
-      game_data.level.state = POST_GAME;
-      game_data.level.delay = 10;
+      if ( game_data.level.iteration++ == MAX_LEVELS )
+      {
+        game_data.level.state = GAME_OVER;
+        game_data.level.delay = 5;
+      }
+      else 
+      {
+        game_data.level.state = POST_GAME;
+        game_data.level.delay = 10;
+      }
     }
     else
     {
@@ -321,7 +334,7 @@ void update_enemy( void )
       if ( game_data.enemy.distance <= 0.0 ) 
       {
         game_data.level.state = YOU_DIED;
-        game_data.level.delay = 5;
+        game_data.level.delay = 10;
       }
     }
   }
