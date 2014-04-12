@@ -14,31 +14,31 @@ unsigned long long getTimestamp( void );
 
 #define INITIAL_FOOD  (double)80
 #define INITIAL_WOOD  (double)40
-#define INITIAL_GOLD  (double)10
+#define INITIAL_GOLD  (double)60
 
-#define FOOD_MULT     (double)0.05
-#define WOOD_MULT     (double)0.04
-#define GOLD_MULT     (double)0.02
+#define FOOD_MULT     (double)0.07
+#define WOOD_MULT     (double)0.05
+#define GOLD_MULT     (double)0.03
 
 typedef struct Cost {
-  int food;
-  int wood;
-  int gold;
+  double food;
+  double wood;
+  double gold;
   char *item;
 } Cost;
 
 Cost costs[11]= {
-  {  0,  0,  0, "Unknown     " }, // ILGL
-  { 30, 20,  0, "Farmer      " }, // WRKF
-  { 40, 10,  0, "Wood Cutter " }, // WRKW
-  { 40, 30,  0, "Gold Miner  " }, // WRKM
-  { 75, 50, 25, "Archer      " }, // WRKA
-  { 90,  0, 50, "Gunner      " }, // WRKG
-  {  0,  0,  0, "Farming     " }, // SKLF
-  {  0,  0,  0, "Wood Cutting" }, // SKLW
-  {  0,  0,  0, "Mining      " }, // SKLM
-  {  0,  0,  0, "Archery     " }, // SKLA
-  {  0,  0,  0, "Gunnery     " }  // SKLG
+  {  0.0,  0.0,  0.0, "Unknown     " }, // ILGL
+  { 20.0, 10.0,  0.0, "Farmer      " }, // WRKF
+  { 20.0, 20.0,  0.0, "Wood Cutter " }, // WRKW
+  { 30.0, 30.0,  0.0, "Gold Miner  " }, // WRKM
+  { 45.0, 30.0, 15.0, "Archer      " }, // WRKA
+  { 60.0,  0.0, 50.0, "Gunner      " }, // WRKG
+  { 20.0,  0.0,  0.0, "Farming     " }, // SKLF
+  { 20.0,  0.0,  0.0, "Wood Cutting" }, // SKLW
+  { 30.0,  0.0,  0.0, "Mining      " }, // SKLM
+  { 50.0,  0.0,  0.0, "Archery     " }, // SKLA
+  { 50.0,  0.0,  0.0, "Gunnery     " }  // SKLG
 };
 
 typedef enum State { 
@@ -94,10 +94,15 @@ typedef struct Workers {
 } Workers;
 
 typedef struct Enemy {
-  int hp;
+  double hp;
   int speed;
   double distance;
 } Enemy;
+
+typedef struct Damage {
+  double archer_dps;
+  double gunner_dps;
+} Damage;
 
 typedef struct GameData {
   int endOfGame;
@@ -107,16 +112,27 @@ typedef struct GameData {
   Resources resources;
   Skills skills;
   Workers workers;
+  Damage damage;
   Enemy enemy;
 } GameData;
 
-
 typedef struct EnemyLevel {
-  int hp;
+  double hp;
   int speed;
 } EnemyLevel;
 
-#define MAX_LEVELS	5
+#define MAX_LEVELS	7
+
+EnemyLevel enemies[MAX_LEVELS] = {
+  {  20.0,   2 },
+  {  35.0,   3 },
+  { 100.0,   1 },
+  {  20.0,   7 },
+  {  25.0,   8 },
+  {  30.0,   8 },
+  { 200.0,   1 }
+};
+
 
 // Key Map
 
