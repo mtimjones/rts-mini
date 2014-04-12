@@ -42,16 +42,29 @@ Cost costs[11]= {
 };
 
 typedef enum State { 
-  INITIALIZATION,
-  PRE_GAME, 
-  IN_GAME, 
-  POST_GAME, 
-  END_GAME,
-  EXIT
+  INITIALIZATION=0,
+  ALL_QUIET=1,
+  PRE_GAME=2, 
+  IN_GAME=3, 
+  POST_GAME=4, 
+  YOU_DIED=5,
+  GAME_OVER=6,
+  EXIT=7
 } State;
 
+const char *status[8]={
+  "Use the arrow keys and ENTER to purchase.\0", // INITIALIZATION
+  "All is quiet...  Prepare for the enemy.  \0", // ALL_QUIET
+  "Rumbling...  An enemy approaches...      \0", // PRE_GAME
+  "Your troops are attacking the enemy...   \0", // IN_GAME
+  "Enemy is defeated.                       \0", // POST_GAME
+  "Enemy has reached the barricade.         \0", // YOU_DIED
+  "Final enemy is defeated.                 \0", // GAME_OVER
+  "                                         \0"  // EXIT
+};
+
 typedef struct Level {
-  uint32 iteration;
+  int iteration;
   State state;
   int delay;
 } Level;
@@ -63,29 +76,27 @@ typedef struct Resources {
 } Resources;
 
 typedef struct Skills {
-  uint32 farming;
-  uint32 wood_cutting;
-  uint32 gold_mining;
-  uint32 archery;
-  uint32 gunnery;
+  int farming;
+  int wood_cutting;
+  int gold_mining;
+  int archery;
+  int gunnery;
 } Skills;
 
 // A skill indicates the rate for the worker (gold/sec, range, etc.).
 
 typedef struct Workers {
-  uint32 farmers;
-  uint32 wood_cutters;
-  uint32 gold_miners;
-  uint32 archers;
-  uint32 gunners;
+  int farmers;
+  int wood_cutters;
+  int gold_miners;
+  int archers;
+  int gunners;
 } Workers;
 
 typedef struct Enemy {
-  uint32 active;
-  uint32 level;
-  uint32 hp;
-  uint32 speed;
-  uint32 distance;
+  int hp;
+  int speed;
+  double distance;
 } Enemy;
 
 typedef struct GameData {
@@ -99,6 +110,13 @@ typedef struct GameData {
   Enemy enemy;
 } GameData;
 
+
+typedef struct EnemyLevel {
+  int hp;
+  int speed;
+} EnemyLevel;
+
+#define MAX_LEVELS	5
 
 // Key Map
 
