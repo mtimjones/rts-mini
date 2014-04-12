@@ -72,6 +72,10 @@ void init_game( void )
   game_data.skills.archery = 1;
   game_data.skills.gunnery = 1;
 
+  // Initialize DPS for soldiers
+  game_data.damage.archer_dps = 1.0;
+  game_data.damage.gunner_dps = 2.0;
+
   // Initialize the menu position
   game_data.curmenu = WRKF;
   emit_cursor_position( );
@@ -142,18 +146,26 @@ void update_screen( void )
   mvwprintw( mainwin, 14, 44, "Gunnery %3d", game_data.skills.gunnery );
 
   mvwprintw( mainwin, 16,  4, "Cost %3d/%3d/%3d (F/W/G) for %s",
-               costs[game_data.curmenu].food, 
-               costs[game_data.curmenu].wood, 
-               costs[game_data.curmenu].gold,
-               costs[game_data.curmenu].item );
+               (int)costs[game_data.curmenu].food, 
+               (int)costs[game_data.curmenu].wood, 
+               (int)costs[game_data.curmenu].gold,
+               (int)costs[game_data.curmenu].item );
 
   if ( game_data.level.state == IN_GAME )
   {
     mvwprintw( mainwin, 20,  4, "Enemy:" );
     mvwprintw( mainwin, 22,  6, "Level   %2d", game_data.level.iteration );
-    mvwprintw( mainwin, 23,  6, "HP     %3d", game_data.enemy.hp );
+    mvwprintw( mainwin, 23,  6, "HP     %3d", (int)game_data.enemy.hp );
     mvwprintw( mainwin, 22, 21, "Speed      %2d", game_data.enemy.speed );
     mvwprintw( mainwin, 23, 21, "Distance  %3d", (int)game_data.enemy.distance );
+  }
+  else
+  {
+    mvwprintw( mainwin, 20,  4, "      " );
+    mvwprintw( mainwin, 22,  6, "           ");
+    mvwprintw( mainwin, 23,  6, "          ");
+    mvwprintw( mainwin, 22, 21, "              ");
+    mvwprintw( mainwin, 23, 21, "             ");
   }
 
   wrefresh( mainwin );
@@ -190,16 +202,26 @@ void purchase_item( )
         game_data.workers.gunners++;
         break;
       case SKLF:
-// Need to multiply cost by 1.1 for each level purchased.
-// for each level, the gold cost of the unit increases accordinly (1.1).
+        costs[SKLF].gold *= 1.1;
+        game_data.skills.farming++;
         break;
       case SKLW:
+        game_data.skills.wood_cutting++;
+        costs[SKLW].gold *= 1.1;
         break;
       case SKLM:
+        game_data.skills.gold_mining++;
+        costs[SKLM].gold *= 1.1;
         break;
       case SKLA:
+        game_data.skills.archery++;
+        costs[SKLA].gold *= 1.1;
+        costs[WRKA].gold *= 1.1;
         break;
       case SKLG:
+        game_data.skills.gunnery++;
+        costs[SKLG].gold *= 1.1;
+        costs[WRKG].gold *= 1.1;
         break;
       default:
         assert(0);
@@ -264,18 +286,25 @@ void update_resources( )
   game_data.resources.wood += ( (double)game_data.workers.wood_cutters * WOOD_MULT );
   game_data.resources.gold += ( (double)game_data.workers.gold_miners * GOLD_MULT );
 
-
   return;
 }
 
 
 void update_enemy( void )
 {
+  double damage = 0.0;
+
   if ( game_data.level.state == IN_GAME )
   {
     // Archers attack
+    damage = ((double)game_data.workers.archers * game_data.damage.archer_dps) / 10.0;    
 
     // Gunners attack
+    damage += (((double)game_data.workers.gunners * game_data.damage.gunner_dps) / 10.0);
+
+    // Enemy damage
+    game_data.enemy.hp -= damage;
+    if (game_data.enemy.hp < 0.0) game_data.enemy.hp = 0;
 
     // Test the enemy
     if ( game_data.enemy.hp <= 0 )
@@ -298,15 +327,6 @@ void update_enemy( void )
   }
   return;
 }
-
-
-EnemyLevel enemies[MAX_LEVELS] = {
-  {  20,   2 }, 
-  {  35,   4 },
-  { 100,   1 },
-  {  20,   7 },
-  { 200,   1 }
-};
 
 
 void init_enemy( void )
