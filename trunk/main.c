@@ -66,11 +66,18 @@ void init_game( void )
   game_data.workers.gold_miners  = 1;
 
   // Initialize the skills
-  game_data.skills.farming = 1;
+  game_data.skills.farming      = 1;
   game_data.skills.wood_cutting = 1;
-  game_data.skills.gold_mining = 1;
-  game_data.skills.archery = 1;
-  game_data.skills.gunnery = 1;
+  game_data.skills.gold_mining  = 1;
+  game_data.skills.archery      = 1;
+  game_data.skills.gunnery      = 1;
+
+  // Set up the progress bar
+  game_data.distance.y     = 23;
+  game_data.distance.x     = 34;
+  game_data.distance.xend  = 53;
+  game_data.distance.range = 100;
+  game_data.distance.value = &game_data.enemy.distance;
 
   // Initialize DPS for soldiers
   game_data.damage.archer_dps = 1.0;
@@ -113,6 +120,22 @@ void clear_cursor_position( void )
   return;
 }
 
+void progressBar( struct ProgressBar *pg )
+{
+  int slots, cleared, x;
+
+  slots = pg->range / (pg->xend - pg->x);
+
+  // Figure out how many blocks should be clear
+  cleared = (pg->range - (int)*pg->value) / slots;
+
+  for (x = pg->xend ; x > (pg->xend - cleared) ; x-- )
+  {
+    mvwaddch( mainwin, x, pg->y, '.' );
+  }
+
+  return;
+}
 
 void update_screen( void )
 {
@@ -157,8 +180,16 @@ void update_screen( void )
     mvwprintw( mainwin, 22, 18, "HP        %3d", (int)game_data.enemy.hp );
     mvwprintw( mainwin, 23, 18, "Distance  %3d", (int)game_data.enemy.distance );
 
-    mvwprintw( mainwin, 22, 34, "####################" );
-    mvwprintw( mainwin, 23, 34, "####################" );
+    if ( game_data.distance.first )
+    {
+      mvwprintw( mainwin, 23, 34, "####################" );
+      game_data.distance.first = 0;
+    }
+    else
+    {
+      progressBar( &game_data.distance );
+    }
+//    mvwprintw( mainwin, 22, 34, "####################" );
   }
   else
   {
@@ -383,6 +414,7 @@ void update_game_state( )
         case PRE_GAME:
           game_data.level.state = IN_GAME;
           game_data.level.delay = 0;
+          game_data.distance.first = 1;
           mvwprintw( mainwin, 18, 4, "%s      ", status[game_data.level.state] );
           init_enemy( );
           break;

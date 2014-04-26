@@ -105,6 +105,15 @@ typedef struct Damage {
   double gunner_dps;
 } Damage;
 
+typedef struct ProgressBar {
+  int y;
+  int x;
+  int xend;
+  int range;
+  double *value;
+  int first;
+} ProgressBar;
+
 typedef struct GameData {
   int endOfGame;
   int wallclock;
@@ -115,6 +124,7 @@ typedef struct GameData {
   Workers workers;
   Damage damage;
   Enemy enemy;
+  ProgressBar distance;
 } GameData;
 
 typedef struct EnemyLevel {
