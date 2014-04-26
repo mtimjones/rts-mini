@@ -1,7 +1,7 @@
 # Makefile for RTSmini
 
 all:
-	gcc -o rtsmini -lncurses main.c utils.c -Wall
+	gcc -o rtsmini main.c utils.c -Wall -lncurses
 
 clean:
 	@rm -f rtsmini
