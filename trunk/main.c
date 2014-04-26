@@ -122,8 +122,6 @@ void update_screen( void )
   mvwprintw( mainwin,  4,  6, "Time  %03d", (game_data.wallclock/10) );
   mvwprintw( mainwin,  5,  6, "Level %3d", (game_data.level.iteration) );
 
-  mvwprintw( mainwin,  4, 19, "<<status>>" );
-
   mvwprintw( mainwin,  7,  4, "Resources:" );
   mvwprintw( mainwin,  9,  6, "Food %4d", (int)game_data.resources.food );
   mvwprintw( mainwin, 10,  6, "Wood %4d", (int)game_data.resources.wood );
@@ -154,18 +152,23 @@ void update_screen( void )
   if ( game_data.level.state == IN_GAME )
   {
     mvwprintw( mainwin, 20,  4, "Enemy:" );
-    mvwprintw( mainwin, 22,  6, "Level   %2d", game_data.level.iteration );
-    mvwprintw( mainwin, 23,  6, "HP     %3d", (int)game_data.enemy.hp );
-    mvwprintw( mainwin, 22, 21, "Speed      %2d", game_data.enemy.speed );
-    mvwprintw( mainwin, 23, 21, "Distance  %3d", (int)game_data.enemy.distance );
+    mvwprintw( mainwin, 22,  6, "Level  %2d", game_data.level.iteration );
+    mvwprintw( mainwin, 23,  6, "Speed  %2d", game_data.enemy.speed );
+    mvwprintw( mainwin, 22, 18, "HP        %3d", (int)game_data.enemy.hp );
+    mvwprintw( mainwin, 23, 18, "Distance  %3d", (int)game_data.enemy.distance );
+
+    mvwprintw( mainwin, 22, 34, "####################" );
+    mvwprintw( mainwin, 23, 34, "####################" );
   }
   else
   {
     mvwprintw( mainwin, 20,  4, "      " );
     mvwprintw( mainwin, 22,  6, "           ");
     mvwprintw( mainwin, 23,  6, "          ");
-    mvwprintw( mainwin, 22, 21, "              ");
-    mvwprintw( mainwin, 23, 21, "             ");
+    mvwprintw( mainwin, 22, 18, "              ");
+    mvwprintw( mainwin, 23, 18, "             ");
+    mvwprintw( mainwin, 22, 34, "                    " );
+    mvwprintw( mainwin, 23, 34, "                    " );
   }
 
   wrefresh( mainwin );
@@ -346,6 +349,7 @@ void init_enemy( void )
 {
   // Iteration starts at 1, so we subtract one for the enemies array
   game_data.enemy.hp = enemies[game_data.level.iteration-1].hp;
+  game_data.enemy.max_hp = game_data.enemy.hp;
   game_data.enemy.speed = enemies[game_data.level.iteration-1].speed;
   game_data.enemy.distance = 100.0;
 

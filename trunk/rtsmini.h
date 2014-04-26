@@ -18,7 +18,7 @@ unsigned long long getTimestamp( void );
 
 #define FOOD_MULT     (double)0.07
 #define WOOD_MULT     (double)0.05
-#define GOLD_MULT     (double)0.035
+#define GOLD_MULT     (double)0.038
 
 typedef struct Cost {
   double food;
@@ -95,6 +95,7 @@ typedef struct Workers {
 
 typedef struct Enemy {
   double hp;
+  double max_hp;
   int speed;
   double distance;
 } Enemy;
