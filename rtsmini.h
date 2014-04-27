@@ -5,7 +5,7 @@
 
 typedef unsigned int uint32;
 
-#define NLINES		30
+#define NLINES		26
 #define NCOLS		60
 
 #define TIME_DELTA	(unsigned long long)100000
@@ -63,6 +63,15 @@ const char *status[8]={
   "                                         \0"  // EXIT
 };
 
+typedef struct ProgressBar {
+  int y;
+  int x;
+  int xend;
+  int range;
+  double *value;
+  int first;
+} ProgressBar;
+
 typedef struct Level {
   int iteration;
   State state;
@@ -95,24 +104,16 @@ typedef struct Workers {
 
 typedef struct Enemy {
   double hp;
-  double max_hp;
   int speed;
   double distance;
+  ProgressBar hp_pb;
+  ProgressBar dist_pb;
 } Enemy;
 
 typedef struct Damage {
   double archer_dps;
   double gunner_dps;
 } Damage;
-
-typedef struct ProgressBar {
-  int y;
-  int x;
-  int xend;
-  int range;
-  double *value;
-  int first;
-} ProgressBar;
 
 typedef struct GameData {
   int endOfGame;
@@ -124,7 +125,6 @@ typedef struct GameData {
   Workers workers;
   Damage damage;
   Enemy enemy;
-  ProgressBar distance;
 } GameData;
 
 typedef struct EnemyLevel {
