@@ -72,12 +72,17 @@ void init_game( void )
   game_data.skills.archery      = 1;
   game_data.skills.gunnery      = 1;
 
-  // Set up the progress bar
-  game_data.distance.y     = 23;
-  game_data.distance.x     = 34;
-  game_data.distance.xend  = 53;
-  game_data.distance.range = 100;
-  game_data.distance.value = &game_data.enemy.distance;
+  // Set up the enemy distance progress bar
+  game_data.enemy.dist_pb.y     = 23;
+  game_data.enemy.dist_pb.x     = 34;
+  game_data.enemy.dist_pb.xend  = 53;
+  game_data.enemy.dist_pb.value = &game_data.enemy.distance;
+
+  // Set up the enemy HP progress bar
+  game_data.enemy.hp_pb.y     = 22;
+  game_data.enemy.hp_pb.x     = 34;
+  game_data.enemy.hp_pb.xend  = 53;
+  game_data.enemy.hp_pb.value = &game_data.enemy.hp;
 
   // Initialize DPS for soldiers
   game_data.damage.archer_dps = 1.0;
@@ -120,22 +125,25 @@ void clear_cursor_position( void )
   return;
 }
 
+
 void progressBar( struct ProgressBar *pg )
 {
-  int slots, cleared, x;
+  double slots;
+  int cleared, x;
 
-  slots = pg->range / (pg->xend - pg->x);
+  slots = (double)pg->range / (double)((pg->xend - pg->x) + 0.5);
 
   // Figure out how many blocks should be clear
-  cleared = (pg->range - (int)*pg->value) / slots;
+  cleared = (int)((((double)pg->range - *pg->value) / slots) + 0.5);
 
-  for (x = pg->xend ; x > (pg->xend - cleared) ; x-- )
+  for (x = pg->xend ; x >= (pg->xend - cleared) ; x-- )
   {
-    mvwaddch( mainwin, x, pg->y, '.' );
+    mvwaddch( mainwin, pg->y, x, '.' );
   }
 
   return;
 }
+
 
 void update_screen( void )
 {
@@ -180,16 +188,26 @@ void update_screen( void )
     mvwprintw( mainwin, 22, 18, "HP        %3d", (int)game_data.enemy.hp );
     mvwprintw( mainwin, 23, 18, "Distance  %3d", (int)game_data.enemy.distance );
 
-    if ( game_data.distance.first )
+    if ( game_data.enemy.dist_pb.first )
     {
       mvwprintw( mainwin, 23, 34, "####################" );
-      game_data.distance.first = 0;
+      game_data.enemy.dist_pb.first = 0;
     }
     else
     {
-      progressBar( &game_data.distance );
+      progressBar( &game_data.enemy.dist_pb );
     }
-//    mvwprintw( mainwin, 22, 34, "####################" );
+
+    if ( game_data.enemy.hp_pb.first )
+    {
+      mvwprintw( mainwin, 22, 34, "####################" );
+      game_data.enemy.hp_pb.first = 0;
+    }
+    else
+    {
+      progressBar( &game_data.enemy.hp_pb );
+    }
+
   }
   else
   {
@@ -348,7 +366,7 @@ void update_enemy( void )
     // Test the enemy
     if ( game_data.enemy.hp <= 0 )
     {
-      if ( game_data.level.iteration++ == MAX_LEVELS )
+      if ( game_data.level.iteration == MAX_LEVELS )
       {
         game_data.level.state = GAME_OVER;
         game_data.level.delay = 5;
@@ -380,9 +398,14 @@ void init_enemy( void )
 {
   // Iteration starts at 1, so we subtract one for the enemies array
   game_data.enemy.hp = enemies[game_data.level.iteration-1].hp;
-  game_data.enemy.max_hp = game_data.enemy.hp;
   game_data.enemy.speed = enemies[game_data.level.iteration-1].speed;
   game_data.enemy.distance = 100.0;
+
+  game_data.enemy.dist_pb.first = 1;
+  game_data.enemy.dist_pb.range = game_data.enemy.distance;
+
+  game_data.enemy.hp_pb.first = 1;
+  game_data.enemy.hp_pb.range = game_data.enemy.hp;
 
   return;
 }
@@ -414,9 +437,8 @@ void update_game_state( )
         case PRE_GAME:
           game_data.level.state = IN_GAME;
           game_data.level.delay = 0;
-          game_data.distance.first = 1;
-          mvwprintw( mainwin, 18, 4, "%s      ", status[game_data.level.state] );
           init_enemy( );
+          mvwprintw( mainwin, 18, 4, "%s      ", status[game_data.level.state] );
           break;
 
         case IN_GAME:
