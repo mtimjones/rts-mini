@@ -54,6 +54,7 @@ void init_game( void )
   game_data.level.iteration = 1;
   game_data.level.state = INITIALIZATION;
   game_data.level.delay = 10; // 10 seconds
+  game_data.endTime = 0;
 
   // Initialize the resources
   game_data.resources.food = INITIAL_FOOD;
@@ -368,6 +369,7 @@ void update_enemy( void )
     {
       if ( game_data.level.iteration == MAX_LEVELS )
       {
+        game_data.endTime = game_data.wallclock;
         game_data.level.state = GAME_OVER;
         game_data.level.delay = 5;
       }
@@ -510,6 +512,11 @@ int main( int argc, char *argv[] )
   }
 
   win_shutdown( );
+
+  if ( game_data.endTime > 0 )
+  {
+    printf( "You won in %d seconds\n", ( game_data.endTime / 10) );
+  }
 
   return 0;
 }

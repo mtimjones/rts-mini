@@ -118,6 +118,7 @@ typedef struct Damage {
 typedef struct GameData {
   int endOfGame;
   int wallclock;
+  int endTime;
   unsigned int curmenu;
   Level level;
   Resources resources;
